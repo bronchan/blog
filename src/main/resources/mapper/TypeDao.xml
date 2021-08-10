@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chan.dao.TypeDao">
+
+<!--    获取前台里根据分类的博客列表-->
+    <resultMap id="getTypeAndBlog" type="com.chan.dto.BlogsOfType">
+        <result property="id" column="tid"/>
+        <result property="name" column="name"/>
+        <collection property="blogs" ofType="com.chan.pojo.Blog">
+            <id property="id" column="bid"/>
+            <result property="title" column="title"/>
+            <result property="typeId" column="type_id"/>
+        </collection>
+    </resultMap>
+    <select id="getAllBlogsOfType" resultMap="getTypeAndBlog">
+            select  t.id tid, t.name ,b.id bid , b.title, b.type_id
+            from t_type t , t_blog b
+            where t.id = b.type_id
+    </select>
+
+<!--    获取所有分类信息-->
+    <select id="getAllTypes" resultType="com.chan.pojo.Type">
+        select * from t_type
+    </select>
+
+<!--    根据id获取分类-->
+    <select id="getTypeById" parameterType="java.lang.Long" resultType="com.chan.pojo.Type">
+        select * from t_type
+        where id = #{id}
+    </select>
+
+<!--    修改type-->
+    <update id="updateType" parameterType="com.chan.pojo.Type">
+        update t_type set name = #{name}
+        where id = #{id}
+    </update>
+
+<!--    增加分类-->
+    <insert id="addType" parameterType="com.chan.pojo.Type">
+        insert into t_type (name) values (#{name})
+    </insert>
+
+<!--    删除分类-->
+    <delete id="deleteType" parameterType="java.lang.Long">
+        delete from t_type where id = #{id}
+    </delete>
+</mapper>

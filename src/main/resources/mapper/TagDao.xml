@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chan.dao.TagDao">
+
+    <!--    获取前台里根据标签的博客列表-->
+    <resultMap id="getAllTagMap" type="com.chan.dto.BlogsOfTag">
+        <id property="id" column="tid"/>
+        <result property="name" column="name"/>
+        <collection property="blogs" ofType="com.chan.pojo.Blog">
+            <id property="id" column="bid"/>
+            <result property="title" column="title"/>
+        </collection>
+    </resultMap>
+    <select id="getAllBlogsOfTag" resultMap="getAllTagMap">
+        select t.id tid, t.name, b.id bid, b.title
+        from t_tag t, t_blog b ,t_blog_tags bt
+        where t.id = bt.tag_id and b.id = bt.blog_id
+    </select>
+
+<!--    获取所有标签信息-->
+    <select id="getAllTags" resultType="com.chan.pojo.Tag">
+        select * from t_tag
+    </select>
+
+<!--    增加标签-->
+    <insert id="addTag" parameterType="com.chan.pojo.Type">
+        insert into t_tag (name) VALUES (#{name})
+    </insert>
+
+<!--    通过id获取标签-->
+    <select id="getTagById" parameterType="java.lang.Long" resultType="com.chan.pojo.Tag">
+        select * from t_tag
+        where id = #{id}
+    </select>
+
+<!--    修改标签-->
+    <update id="updateTag" parameterType="com.chan.pojo.Tag">
+        update t_tag set name = #{name}
+        where id = #{id}
+    </update>
+
+<!--    删除标签-->
+    <delete id="deleteTag" parameterType="java.lang.Long">
+        delete from t_tag
+        where id = #{id}
+    </delete>
+</mapper>

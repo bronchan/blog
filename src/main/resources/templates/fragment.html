@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>代码复用</title>
+  <link href="../static/images/bron.png" th:href="@{/images/bron.png}" rel="icon" type="image/x-ico">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/semantic-ui/2.2.4/semantic.min.css">
+  <link rel="stylesheet" href="../static/css/me.css" th:href="@{/css/me.css}">
+</head>
+<body>
+<!--导航-->
+<!--style="display: none"-->
+<nav th:fragment="menu(n)" id="nav" class="gird-header" >
+  <div class="ui container">
+    <div class="ui inverted secondary stackable menu">
+      <h2 class="ui olive header item" style="font-family: STSong">bronchan</h2>
+      <!--<div class="right m-item item m-mobile-hide">-->
+      <a href="#" th:href="@{/}" class=" m-item item" th:classappend="${n==1} ? 'active'"><i class="home icon"></i>首页</a>
+      <a href="#" th:href="@{/types (id = -1)}" class="m-item item" th:classappend="${n==2} ? 'active'"><i class="clone outline icon"></i>分类</a>
+      <a href="#" th:href="@{/tags  (id = -1)}" class="m-item item" th:classappend="${n==3} ? 'active'"><i class="tags icon"></i>标签</a>
+<!--      <a href="#" class="m-item item"><i class="clock icon"></i>时间轴</a>-->
+<!--      <a href="#" class="m-item item"><i class="music icon"></i>音乐盒</a>-->
+      <a href="#" th:href="@{/messageBoard}" class="m-item item" th:classappend="${n==4} ? 'active'"><i class="book icon"></i>留言板</a>
+<!--      <a href="#" class="m-item item"><i class="pencil alternate icon"></i>友人帐</a>-->
+<!--      <a href="#" class="olive m-item item"><i class="image icon"></i>照片墙</a>-->
+      <a href="#" th:href="@{/about}" class="m-item item" th:classappend="${n==5} ? 'active'"><i class="info icon"></i>关于我</a>
+      <!--</div>-->
+      <div class="right m-item item">
+        <form name="search" action="#" th:action="@{/search}" method="get" target="_blank">
+          <div class="ui icon transparent input m-margin-tb-tiny" style="color: white">
+            <input style="color: white" type="text" name="keyword" placeholder="Search....">
+            <i onclick="document.forms['search'].submit()" class="search link icon"></i>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <a href="#" class="ui menu toggle black icon button m-right-top m-mobile-hide" style="display: none">
+    <i class="sidebar icon"></i>
+  </a>
+</nav>
+
+
+
+<footer th:fragment="footer" class="ui inverted vertical segment m-padded-tb-massive m-opacity">
+  <!--容器-->
+  <div class="ui center aligned container">
+    <div class="ui inverted divided stackable grid">
+      <div class="four wide column">
+        <div style="font-size: large;font-weight: bold" class="ui inverted m-text-thin m-text-spaced m-margin-top-max" >联系我</div>
+        <div class="ui inverted link list">
+          <div href="#" class="m-text-thin">Email：bronchan23@163.com</div>
+          <div href="#" class="m-text-thin">QQ：970943370</div>
+        </div>
+      </div>
+
+      <div class="four wide column" >
+        <div class="ui inverted link list">
+          <div class="item">
+            <div style="font-size: large;font-weight: bold" class="ui inverted m-text-thin m-text-spaced " >欢迎</div>
+            <img src="../static/images/wink.png" th:src="@{/images/wink.png}" class="ui m-margin-top rounded image" alt="" style="width: 110px">
+          </div>
+        </div>
+      </div>
+
+      <div class="four wide column">
+        <div class="ui inverted link list">
+          <div class="item">
+            <!--微信二维码-->
+            <div style="font-size: large;font-weight: bold" class="ui inverted m-text-thin m-text-spaced " >我的QQ</div>
+            <img src="../static/images/qq.png" th:src="@{/images/qq.png}"  class="ui m-margin-top rounded image" alt="" style="width: 110px">
+          </div>
+        </div>
+      </div>
+      <!--博客运行时间统计-->
+      <div class="four wide column">
+        <div style="font-size: large;font-weight: bold" class="ui inverted  m-text-thin m-text-spaced m-margin-top">博客信息</div>
+        <!--<p id="htmer_time" class="item m-text-thin"></p>-->
+        <div id="blog-message">
+          <div class="ui inverted link list" style="align-content: center;margin-top: 10px">
+            <div class="m-text-thin" style="text-align: left;margin-left: 75px;">
+              文章总数： <h2 class="ui orange header m-inline-block m-margin-top-null" style="font-size:medium;" th:text="${totals.blogTotals}"> 14 </h2> 篇
+            </div>
+            <div class="m-text-thin" style="text-align: left;margin-left: 75px">
+              访问总数： <h2 class="ui orange header m-inline-block m-margin-top-null" style="font-size:medium;" th:text="${totals.viewTotals}"> 14 </h2> 次
+            </div>
+            <div class="m-text-thin" style="text-align: left;margin-left: 75px">
+              评论总数： <h2 class="ui orange header m-inline-block m-margin-top-null" style="font-size:medium;" th:text="${totals.commentTotals}"> 14 </h2> 条
+            </div>
+            <div class="m-text-thin" style="text-align: left;margin-left: 75px">
+              留言总数： <h2 class="ui orange header m-inline-block m-margin-top-null" style="font-size:medium;" th:text="${totals.messageTotals}"> 14 </h2> 条
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="ui inverted section divider"></div>
+    <div style="color: #F08047;margin-top: -18px" class="ui inverted m-text-thin m-text-spaced">
+      <p>本博客是由前辈们的开源项目而来</p>
+      <p>前端代码来至：https://github.com/oneStarLR
+        <a href="https://github.com/oneStarLR"><i class="linkify icon" style="color: #F08047"></i></a>
+      </p>
+      <p>后端代码为B站教程 小而美博客 </p>
+      <p>感谢分享</p>
+<!--      <p>我的客栈已营业：<span id="htmer_time" class="item m-text-thin"></span> (*๓´╰╯`๓)</p>-->
+    </div>
+  </div>
+  </div>
+</footer>
+
+
+
+</body>
+</html>

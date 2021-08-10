@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chan.dao.BlogDao">
+
+<!--    获取首页的博客列表-->
+    <resultMap id="FirstPageBlog" type="com.chan.dto.BlogInfo">
+        <id property="id" column="id"/>
+        <result property="firstPicture" column="first_picture"/>
+        <result property="description" column="description"/>
+        <result property="title" column="title"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="views" column="views"/>
+        <result property="typeName" column="name"/>
+        <result property="nickname" column="nickname"/>
+        <result property="avatar" column="avatar"/>
+    </resultMap>
+    <select id="getAllFirstPageBlog" resultMap="FirstPageBlog">
+        select b.id,b.description,b.title,b.update_time,b.views,b.first_picture,
+               t.name,
+               u.avatar,u.nickname
+        from t_blog  b,t_type t,t_user u
+        where b.type_id = t.id and b.user_id = u.id
+        order by b.update_time desc
+    </select>
+
+
+<!--    获取根据关键词搜索的博客列表-->
+    <resultMap id="SearchBlog" type="com.chan.dto.BlogInfo">
+    <id property="id" column="id"/>
+    <result property="firstPicture" column="first_picture"/>
+    <result property="description" column="description"/>
+    <result property="title" column="title"/>
+    <result property="updateTime" column="update_time"/>
+    <result property="views" column="views"/>
+    <result property="typeName" column="name"/>
+    </resultMap>
+    <select id="getAllSearch" resultMap="SearchBlog">
+        <bind name="key" value="'%'+keyword+'%'"/>
+        select b.id,b.description,b.title,b.update_time,b.views,b.first_picture,
+               t.name
+        from t_blog  b
+        inner join t_type t
+        on  b.type_id = t.id
+        where   b.title like #{key} or b.content like #{key}
+        order by b.update_time desc
+    </select>
+
+<!--    获取推荐博客的信息-->
+    <select id="getRecommendBlog" resultType="com.chan.dto.RecommendBlog">
+        select id,title,recommend from t_blog
+        order by recommend desc
+    </select>
+
+<!--    获取详细的博客内容-->
+    <resultMap id="DetailedBlog" type="com.chan.dto.DetailedBlog">
+        <id property="id" column="bid"/>
+        <result property="firstPicture" column="first_picture"/>
+        <result property="flag" column="flag"/>
+        <result property="title" column="title"/>
+        <result property="content" column="content"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="views" column="views"/>
+        <result property="commentabled" column="commentabled"/>
+        <result property="shareStatement" column="share_statement"/>
+        <result property="appreciation" column="appreciation"/>
+        <result property="nickname" column="nickname"/>
+        <result property="avatar" column="avatar"/>
+        <result property="typeName" column="typeName"/>
+        <collection property="tags" ofType="com.chan.pojo.Tag">
+            <id property="id" column="tid"/>
+            <result property="name" column="name"/>
+        </collection>
+    </resultMap>
+    <select id="getDetailedBlogById" resultMap="DetailedBlog">
+        select b.id bid,b.first_picture,b.content,b.title,b.flag,b.views,b.appreciation,b.share_statement,b.commentabled,b.update_time,
+               u.avatar,u.nickname,
+               t.id tid , t.name,
+               ty.name typeName
+        from t_blog b , t_user u , t_blog_tags bt , t_tag t ,t_type ty
+        where b.id = #{id} and b.user_id = u.id and bt.blog_id = b.id and t.id = bt.tag_id and ty.id = b.type_id
+        order by b.update_time desc
+    </select>
+
+<!--        根据分类获取博客-->
+    <select id="getTypeOfBlog" resultMap="FirstPageBlog">
+        select b.id,b.description,b.title,b.update_time,b.views,b.first_picture,
+               t.name,
+               u.avatar,u.nickname
+        from t_blog  b,t_type t,t_user u
+        where b.type_id = #{typeId} and b.user_id = u.id and b.type_id = t.id
+        order by b.update_time desc
+    </select>
+
+<!--    根据标签获取博客-->
+    <select id="getTagOfBlog" resultMap="FirstPageBlog">
+        select b.id,b.description,b.title,b.update_time,b.views,b.first_picture,
+               t.name,
+               u.avatar,u.nickname
+        from t_blog  b,t_type t,t_user u ,t_blog_tags bt
+        where bt.blog_id = b.id and b.user_id = u.id and b.type_id = t.id and bt.tag_id = #{tagId}
+        order by b.update_time desc
+    </select>
+
+<!--    获取后台编辑页的博客-->
+    <resultMap id="EditBlogInfoMap" type="com.chan.dto.EditBlogInfo">
+        <id property="id" column="bid"/>
+        <result property="title" column="title"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="recommend" column="recommend"/>
+        <result property="typeId" column="type_id"/>
+        <association property="type" javaType="com.chan.pojo.Type">
+            <id property="id" column="tid"/>
+            <result property="name" column="name"/>
+        </association>
+    </resultMap>
+    <select id="getEditBlogInfo" resultMap="EditBlogInfoMap">
+        select b.id bid,b.title,b.update_time,b.recommend,b.type_id
+                ,t.id tid,t.name
+        from t_blog b, t_type t
+        where t.id = b.type_id
+    </select>
+
+<!--    根据搜索信息获取编辑页的博客信息-->
+    <select id="getEditBlogInfoBySearchInfo" parameterType="com.chan.dto.SearchInfo" resultMap="EditBlogInfoMap">
+#         绑定通配符不能为null值
+        <bind name="title" value="'%'+title+'%'"/>
+        select b.id bid,b.title,b.update_time,b.recommend,b.type_id
+             ,t.id tid,t.name
+        from t_blog b, t_type t
+        <where>
+            <if test="typeId != null">
+                b.type_id = #{typeId}
+            </if>
+            <if test="recommend != null">
+                and b.recommend = 1
+            </if>
+            <if test="title != null">
+                and b.title like #{title}
+            </if>
+            <if test="1==1">
+                and t.id = b.type_id
+            </if>
+        </where>
+    </select>
+
+<!--    保存博客-->
+    <insert id="saveBlog" parameterType="com.chan.pojo.Blog">
+        insert into t_blog ( id,title, content, first_picture, flag, views, appreciation, share_statement, commentabled, published, create_time, update_time, type_id, user_id, description, tag_ids)
+        VALUES (#{id},#{title},#{content},#{firstPicture},#{flag},#{views},#{appreciation},#{shareStatement},#{commentabled},#{published},#{createTime},
+                #{updateTime},#{typeId},#{userId},#{description},#{tagIds})
+    </insert>
+
+<!--    获取最大博客id-->
+    <select id="getMaxBlogId" resultType="java.lang.Long">
+        SELECT `id`
+        FROM `t_blog`
+        ORDER BY `id` DESC
+        LIMIT 0,1
+    </select>
+
+<!--    删除博客-->
+    <delete id="deleteBlog" parameterType="java.lang.Long">
+        delete from t_blog where id = #{id}
+    </delete>
+
+<!--    根据ID获取博客-->
+    <select id="getBlogById" parameterType="java.lang.Long" resultType="com.chan.pojo.Blog">
+        select * from t_blog
+        where id = #{id}
+    </select>
+
+<!--    修改博客-->
+    <update id="updateBlog" parameterType="com.chan.pojo.Blog">
+        update t_blog set published = #{published},flag = #{flag} ,
+        title = #{title}, content = #{content}, type_id = #{typeId}, tag_ids = #{tagIds},
+        first_picture = #{firstPicture} , description = #{description}  ,
+        share_statement = #{shareStatement}, appreciation = #{appreciation},
+        commentabled = #{commentabled} ,update_time = #{updateTime} where id = #{id};
+    </update>
+
+    <update id="addRecommendCount" parameterType="java.lang.Long">
+        UPDATE t_blog SET recommend = recommend+1
+        WHERE id = #{id}
+    </update>
+
+    <update id="addViews"  parameterType="com.chan.pojo.Blog">
+        UPDATE t_blog SET views = views+1
+        WHERE id = #{id}
+    </update>
+
+    <select id="blogTotal" resultType="int">
+        select count(*) from t_blog
+    </select>
+
+    <select id="views" resultType="int">
+        SELECT SUM(views) FROM t_blog
+    </select>
+</mapper>
