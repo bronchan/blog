@@ -2,6 +2,7 @@ package com.chan.config;
 
 import com.chan.dto.TotalsDto;
 import com.chan.pojo.BlogsAndTags;
+import com.chan.pojo.User;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -23,5 +24,10 @@ public class BeanConfig {
     @Bean
     public TotalsDto totalsDto(){
         return new TotalsDto();
+    }
+
+    @Bean
+    public User user(){
+        return new User();
     }
 }

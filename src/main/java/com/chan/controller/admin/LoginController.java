@@ -5,6 +5,7 @@ import com.chan.pojo.User;
 import com.chan.service.impl.BlogServiceImpl;
 import com.chan.service.impl.CommentServiceImpl;
 import com.chan.service.impl.UserServiceImpl;
+import com.chan.util.MD5Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
+import java.util.Date;
 
 /**
  * @author bronchan
@@ -27,13 +29,16 @@ public class LoginController {
     private UserServiceImpl userService;
 
     @Autowired
-    CommentServiceImpl commentService;
+    private CommentServiceImpl commentService;
 
     @Autowired
-    TotalsDto totalsDto;
+    private TotalsDto totalsDto;
 
     @Autowired
-    BlogServiceImpl blogService;
+    private BlogServiceImpl blogService;
+
+    @Autowired
+    private User user;
 
     @GetMapping
     public String toLogin(){
@@ -65,6 +70,19 @@ public class LoginController {
     @GetMapping("/logout")
     public String logout(HttpSession session){
         session.invalidate();
+        return "redirect:/admin";
+    }
+
+    @GetMapping("/chen/qi/tao")
+    public String addUser(){
+        String code = MD5Utils.code("chen7830232+");
+        user.setPassword(code);
+        user.setNickname("bronchan");
+        user.setUsername("chan");
+        user.setType(1);
+        user.setCreateTime(new Date());
+        user.setEmail("bronchan23@163.com");
+        userService.addUser(user);
         return "redirect:/admin";
     }
 

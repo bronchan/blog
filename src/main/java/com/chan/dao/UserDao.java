@@ -22,4 +22,6 @@ public interface UserDao {
      * @return User
      */
     User getUserByInfo(@Param("username") String username, @Param("password") String password);
+
+    void addUser(User user);
 }

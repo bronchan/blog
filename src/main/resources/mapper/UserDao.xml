@@ -12,4 +12,8 @@
         select * from t_user t
         where t.username = #{username} and t.password = #{password}
     </select>
+
+    <insert id="addUser" parameterType="com.chan.pojo.User">
+        insert into blog.`t_user`(nickname,username,password,email,`type`,create_time) values (#{nickname},#{username},#{password},#{email},#{type},#{createTime})
+    </insert>
 </mapper>

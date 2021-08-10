@@ -5,4 +5,5 @@ import com.chan.pojo.User;
 public interface UserService {
     User getUser();
     User getUserByInfo(String username, String password);
+    void addUser(User user);
 }
